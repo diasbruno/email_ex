@@ -10,7 +10,8 @@ defmodule EmailEx.MixProject do
       elixir: "~> 1.9",
       description: "Address specification parser (RFC2822).",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package()
     ]
   end
 
