@@ -45,18 +45,6 @@ defmodule EmailEx do
 
   @doc """
   Check if an address is valid.
-
-  ## Examples
-
-    iex> EmailEx.valid? nil
-    false
-
-    iex> EmailEx.valid? ""
-    false
-
-    iex> EmailEx.parse "a@a.com"
-    true
-
   """
   @doc since: "0.1.0"
   @spec valid?(String.t) :: true | false
