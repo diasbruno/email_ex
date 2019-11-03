@@ -1,7 +1,3 @@
-defmodule EmailExError do
-  defexception message: "Expected address."
-end
-
 defmodule EmailEx do
   @moduledoc """
   E-mail parser and validation.
