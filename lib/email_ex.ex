@@ -11,18 +11,6 @@ defmodule EmailEx do
 
   @doc """
   Parse an address string.
-
-  ## Examples
-
-    iex> EmailEx.parse nil
-    {:error, :expected_address}
-
-    iex> EmailEx.parse ""
-    {:error, :expected_address}
-
-    iex> EmailEx.parse "a@a.com"
-    {:ok, results}
-
   """
   @doc since: "0.1.0"
   @spec parse(String.t) :: {:ok, [String.t]} | {:error, String.t | term}
