@@ -1,10 +1,12 @@
 defmodule EmailEx.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+
   def project do
     [
       app: :email_ex,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.9",
       description: "Address specification parser (RFC2822).",
       start_permanent: Mix.env() == :prod,
