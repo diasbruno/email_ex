@@ -1,9 +1,25 @@
+defmodule EmailExError do
+  defexception message: "Expected address."
+end
+
 defmodule EmailEx do
   @moduledoc """
   E-mail parser and validation.
   """
   use Combine
   alias EmailEx.RFC2822
+
+  @expected_address_error "Expected address."
+
+  def run(nil), do: {:error, @expected_address_error}
+
+  def run(""), do: {:error, @expected_address_error}
+
+  def run(str),
+    do: Combine.parse(
+          str,
+          RFC2822.local_part() |> char("@") |> RFC2822.domain
+        )
 
   @doc """
   Parse an address string.
@@ -22,13 +38,19 @@ defmodule EmailEx do
   """
   @doc since: "0.1.0"
   @spec parse(String.t) :: {:ok, [String.t]} | {:error, String.t | term}
-  def parse(nil), do: {:error, :expected_address}
-
-  def parse(""), do: {:error, :expected_address}
-
   def parse(str) do
-    case Combine.parse(str, RFC2822.local_part() |> char("@") |> RFC2822.domain) do
+    case run(str) do
       {:error, _} = error -> error
+      value -> {:ok, value}
+    end
+  end
+
+  @doc """
+  Parse an address, and if fail, throws an exception
+  """
+  def parse!(str) do
+    case run(str) do
+      {:error, reason} -> raise EmailExError, message: reason
       value -> {:ok, value}
     end
   end

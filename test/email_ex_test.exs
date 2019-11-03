@@ -1,13 +1,15 @@
 defmodule EmailExTest do
   use ExUnit.Case
 
+  @expected_address_error "Expected address."
+
   describe "parse" do
     test "nil is error." do
-      assert {:error, :expected_address} = EmailEx.parse(nil)
+      assert {:error, @expected_address_error} = EmailEx.parse(nil)
     end
 
     test "empty string is error." do
-      assert {:error, :expected_address} = EmailEx.parse("")
+      assert {:error, @expected_address_error} = EmailEx.parse("")
     end
 
     test "invalid is error with reason." do
@@ -18,6 +20,41 @@ defmodule EmailExTest do
     test "parse a valid address." do
       result = ["a", "@", "a.com"]
       assert {:ok, ^result} = EmailEx.parse("a@a.com")
+    end
+  end
+
+  describe "parse!" do
+    test "nil is error." do
+      try do
+        EmailEx.parse!(nil)
+      rescue
+        e in EmailExError ->
+          assert @expected_address_error == e.message
+      end
+    end
+
+    test "empty string is error." do
+      try do
+        EmailEx.parse!("")
+      rescue
+        e in EmailExError ->
+          assert @expected_address_error == e.message
+      end
+    end
+
+    test "invalid is error with reason." do
+      reason = ~s(Expected `@`, but hit end of input.)
+      try do
+        EmailEx.parse!("a")
+      rescue
+        e in EmailExError ->
+          assert reason == e.message
+      end
+    end
+
+    test "parse a valid address." do
+      result = ["a", "@", "a.com"]
+      assert {:ok, ^result} = EmailEx.parse!("a@a.com")
     end
   end
 
@@ -74,21 +111,21 @@ defmodule EmailExTest do
       assert EmailEx.valid?("user.name+tag+sorting@example.com")
       assert EmailEx.valid?("user%example.com@example.org")
       assert EmailEx.valid?("fully-qualified-domain@example.com")
-      assert EmailEx.valid?("\"John..Doe\"@example.com")
+      assert EmailEx.valid?(~s("John..Doe"@example.com))
       assert EmailEx.valid?("!def!xyz%abc@example.com")
       assert EmailEx.valid?("$A12345@example.com")
       assert EmailEx.valid?("customer/department=shipping@example.com")
-      assert EmailEx.valid?("\"Abc@def\"@example.com")
+      assert EmailEx.valid?(~s("Abc@def"@example.com))
       assert EmailEx.valid?("_somename@example.com")
-
-      # in rfc 5322
       assert EmailEx.valid?("Joe.//Blow@example.com")
+
+      # in rfc 5322 (?)
       # assert EmailEx.valid? "Fred\ Bloggs@example.com"
       # assert EmailEx.valid? "\" \"@example.org"
     end
 
     test "domain" do
-      # in rfc 5322
+      # in rfc 5322 (?)
       # assert EmailEx.valid? "jsmith@[IPv6:2001:db8::1]"
       assert EmailEx.valid?("jsmith@[192.168.2.1]")
     end
