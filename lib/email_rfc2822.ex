@@ -4,6 +4,8 @@ defmodule EmailEx.RFC2822 do
   """
   use Combine
 
+  @expected_address_error "Expected address."
+
   @atext ~r/[\!\#\$\%\&\*\+\-\/\=\?\^\_\`\|\{\}\~\'x[:alpha:][:digit:]]/
 
   def no_ws_ctl(x),
@@ -112,4 +114,16 @@ defmodule EmailEx.RFC2822 do
                   quoted_string(),
                   obs_local_part()])
         ], &Enum.join/1)
+
+
+
+  def run(nil), do: {:error, @expected_address_error}
+
+  def run(""), do: {:error, @expected_address_error}
+
+  def run(str),
+    do: Combine.parse(
+          str,
+          local_part() |> char("@") |> domain
+        )
 end
