@@ -15,7 +15,7 @@ defmodule EmailEx do
   @doc since: "0.1.0"
   @spec parse(String.t) :: {:ok, [String.t]} | {:error, String.t | term}
   def parse(str) do
-    case RFC2822.run(str) do
+    case RFC2822.parse(str) do
       {:error, _} = error -> error
       value -> {:ok, value}
     end
@@ -24,8 +24,9 @@ defmodule EmailEx do
   @doc """
   Parse an address, and if fail, throws an exception
   """
+  @doc since: "0.2.1"
   def parse!(str) do
-    case RFC2822.run(str) do
+    case RFC2822.parse(str) do
       {:error, reason} -> raise EmailExError, message: reason
       value -> {:ok, value}
     end

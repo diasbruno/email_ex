@@ -115,13 +115,12 @@ defmodule EmailEx.RFC2822 do
                   obs_local_part()])
         ], &Enum.join/1)
 
+  @doc since: "0.2.1"
+  def parse(nil), do: {:error, @expected_address_error}
 
+  def parse(""), do: {:error, @expected_address_error}
 
-  def run(nil), do: {:error, @expected_address_error}
-
-  def run(""), do: {:error, @expected_address_error}
-
-  def run(str),
+  def parse(str),
     do: Combine.parse(
           str,
           local_part() |> char("@") |> domain
