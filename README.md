@@ -1,4 +1,4 @@
-# EmailEx
+# EmailEx [![Build Status](https://travis-ci.org/diasbruno/email_ex.svg?branch=master)](https://travis-ci.org/diasbruno/email_ex)
 
 Address specification parser (RFC2822).
 
