@@ -1,43 +1,63 @@
 defmodule EmailExTest do
   use ExUnit.Case
 
-  test "nil is false." do
-    assert not EmailEx.valid?(nil)
+  describe "parse" do
+    test "nil is error." do
+      assert {:error, :expected_address} = EmailEx.parse(nil)
+    end
+
+    test "empty string is error." do
+      assert {:error, :expected_address} = EmailEx.parse("")
+    end
+
+    test "invalid is error with reason." do
+      reason = "Expected `@`, but hit end of input."
+      assert {:error, ^reason} = EmailEx.parse("a")
+    end
+
+    test "parse a valid address." do
+      result = ["a", "@", "a.com"]
+      assert {:ok, ^result} = EmailEx.parse("a@a.com")
+    end
   end
 
-  test "empty string is nil." do
-    assert not EmailEx.valid?("")
-  end
+  describe "valid?" do
+    test "nil is false." do
+      assert not EmailEx.valid?(nil)
+    end
 
-  test "fail without @domain." do
-    assert not EmailEx.valid?("test")
-  end
+    test "empty string is nil." do
+      assert not EmailEx.valid?("")
+    end
 
-  test "a simple email with domain not dotted." do
-    assert EmailEx.valid?("a@a")
-  end
+    test "fail without @domain." do
+      assert not EmailEx.valid?("test")
+    end
 
-  test "a simple email with domain." do
-    assert EmailEx.valid?("a@a.com")
-  end
+    test "a simple email with domain not dotted." do
+      assert EmailEx.valid?("a@a")
+    end
 
-  test "dotted local part." do
-    assert EmailEx.valid?("a.b@a.com")
-  end
+    test "a simple email with domain." do
+      assert EmailEx.valid?("a@a.com")
+    end
 
-  test "local part with different characters." do
-    assert EmailEx.valid?("a#b!test@a.com")
-  end
+    test "dotted local part." do
+      assert EmailEx.valid?("a.b@a.com")
+    end
 
-  test "quoted string in local part." do
-    assert EmailEx.valid?("\"a\"@a.com")
-  end
+    test "local part with different characters." do
+      assert EmailEx.valid?("a#b!test@a.com")
+    end
 
-  test "quoted string with quoted pair in local part." do
-    assert EmailEx.valid?("\"a\\n\"@a.com")
-  end
+    test "quoted string in local part." do
+      assert EmailEx.valid?("\"a\"@a.com")
+    end
 
-  describe "nasty stuff" do
+    test "quoted string with quoted pair in local part." do
+      assert EmailEx.valid?("\"a\\n\"@a.com")
+    end
+
     test "with comments" do
       assert EmailEx.valid?("john.smith(comment)@example.com")
       assert EmailEx.valid?("(comment)john.smith@example.com")
