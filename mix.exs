@@ -23,7 +23,8 @@ defmodule EmailEx.MixProject do
 
   defp deps do
     [
-      {:combine, "~> 0.10.0"}
+      {:combine, "~> 0.10.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 
