@@ -1,25 +1,32 @@
 defmodule EmailEx do
   @moduledoc """
-  E-mail parser and validation according to rfc-2822.
+  E-mail parser and validation.
   """
   use Combine
   alias EmailEx.RFC2822
 
   @doc """
-  Parse a address string.
+  Parse an address string.
+
+
+  ## Examples
 
     iex> EmailEx.parse(nil)
-    {:error, "Expected address to parse."}
+    {:error, reason}
 
     iex> EmailEx.parse("")
-    {:error, "Expected address to parse."}
+    {:error, reason}
 
     iex> EmailEx.parse("a@a.com")
-    {:ok, ["a", "@", "a.com"]}
+    {:ok, results}
 
   """
+  @doc since: "0.1.0"
+  @spec parse(String.t) :: {:ok, [String.t]} | {:error, String.t}
   def parse(nil), do: {:error, "Expected address to parse."}
+
   def parse(""), do: {:error, "Expected address to parse."}
+
   def parse(str) do
     case Combine.parse(str, RFC2822.local_part() |> char("@") |> RFC2822.domain) do
       {:error, _} = error -> error
@@ -28,7 +35,10 @@ defmodule EmailEx do
   end
 
   @doc """
-  Check if an e-mail is valid.
+  Check if an address is valid.
+
+
+  ## Examples
 
     iex> EmailEx.valid?(nil)
     false
@@ -40,8 +50,14 @@ defmodule EmailEx do
     true
 
   """
-  def valid?(nil), do: false
-  def valid?(""), do: false
+  @doc since: "0.1.0"
+  @spec valid?(String.t) :: true | false
+  def valid?(nil),
+    do: false
+
+  def valid?(""),
+    do: false
+
   def valid?(email) do
     case parse(email) do
       {:error, _} -> false
